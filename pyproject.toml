@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gnomecast"
+version = "2.1.0"
+description = "A native Linux GUI for casting local audio/video files to Chromecast."
+readme = "README.md"
+license = "GPL-3.0-or-later"
+requires-python = ">=3.9"
+authors = [{ name = "Derek Anderson", email = "public@kered.org" }]
+keywords = ["chromecast", "cast", "gtk", "ffmpeg", "media"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: X11 Applications :: GTK",
+    "Intended Audience :: End Users/Desktop",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Topic :: Multimedia :: Video",
+]
+
+# Runtime Python dependencies. ffmpeg/ffprobe are system binaries (not pip
+# installable) and GTK3 is provided by the system PyGObject package.
+dependencies = [
+    "pychromecast",
+    "PyGObject",
+]
+
+[project.optional-dependencies]
+# Screensaver inhibition while casting (degrades gracefully if absent).
+screensaver = ["dbus-python"]
+test = ["pytest"]
+
+[project.urls]
+Homepage = "https://github.com/keredson/gnomecast"
+Issues = "https://github.com/keredson/gnomecast/issues"
+
+[project.gui-scripts]
+gnomecast = "gnomecast.cli:main"
+
+[tool.setuptools]
+packages = ["gnomecast"]
+
+[tool.setuptools.data-files]
+"share/applications" = ["gnomecast.desktop"]
+"share/icons/hicolor/16x16/apps" = ["icons/gnomecast_16.png"]
+"share/icons/hicolor/48x48/apps" = ["icons/gnomecast_48.png"]
+"share/icons/hicolor/scalable/apps" = ["icons/gnomecast.svg"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

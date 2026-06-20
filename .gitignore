@@ -111,3 +111,12 @@ ENV/
 *.suo
 *.user
 *.orig
+
+# pytest
+.pytest_cache/
+
+# makepkg artifacts
+src/
+pkg/
+*.pkg.tar.*
+*.tar.gz
