@@ -1,0 +1,43 @@
+# Maintainer:
+# Contributor: Mark Wagie <mark dot wagie at tutanota dot com>
+# Contributor: Jacob Mischka <jacob@mischka.me>
+pkgname=gnomecast-git
+pkgver=2.1.0
+pkgrel=1
+pkgdesc="A native Linux GUI for casting local files to Chromecast devices"
+arch=('any')
+url="https://github.com/winterdeaf/gnomecast"
+license=('GPL-3.0-or-later')
+# 2.0 rewrite: metadata via ffprobe, stdlib HTTP server, built-in subtitle
+# conversion -> no more python-pycaption/cssutils/bottle/paste/html5lib.
+depends=('ffmpeg' 'gtk3' 'python-gobject' 'python-pychromecast')
+optdepends=('python-dbus: inhibit the screensaver while casting')
+makedepends=('git' 'python-build' 'python-installer' 'python-wheel' 'python-setuptools')
+checkdepends=('python-pytest')
+provides=("${pkgname%-git}")
+conflicts=("${pkgname%-git}")
+source=('git+https://github.com/winterdeaf/gnomecast.git')
+sha256sums=('SKIP')
+
+pkgver() {
+	cd "$srcdir/${pkgname%-git}"
+	printf "%s.r%s.%s" \
+		"$(sed -n 's/^__version__ = "\(.*\)"/\1/p' gnomecast/__init__.py)" \
+		"$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+	cd "$srcdir/${pkgname%-git}"
+	python -m build --wheel --no-isolation
+}
+
+check() {
+	cd "$srcdir/${pkgname%-git}"
+	# Backend test suite (uses the system ffmpeg for integration tests).
+	pytest -q
+}
+
+package() {
+	cd "$srcdir/${pkgname%-git}"
+	python -m installer --destdir="$pkgdir" dist/*.whl
+}
